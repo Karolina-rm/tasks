@@ -27,4 +27,8 @@ public class DbService {
     public Optional<Task> getTaskById(Long id) {
         return repository.findById(id);
     }
+
+    public void deleteTask(Long id){
+        repository.deleteById(id);
+    }
 }
