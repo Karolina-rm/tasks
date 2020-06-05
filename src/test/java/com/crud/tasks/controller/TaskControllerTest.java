@@ -2,7 +2,6 @@ package com.crud.tasks.controller;
 
 import com.crud.tasks.domain.Task;
 import com.crud.tasks.domain.TaskDto;
-import com.crud.tasks.domain.TrelloCardDto;
 import com.crud.tasks.mapper.TaskMapper;
 import com.crud.tasks.service.DbService;
 import com.google.gson.Gson;
@@ -31,12 +30,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(TaskController.class)
 public class TaskControllerTest {
+
+    private static TaskDto taskDto;
+    private static Task task;
+    private static Gson gson;
+
     @Autowired
     private MockMvc mockMvc;
     @MockBean
     private DbService dbService;
     @MockBean
     private TaskMapper taskMapper;
+
 
     @Test
     public void shouldFetchEmptyTasksList() throws Exception {
@@ -67,8 +72,8 @@ public class TaskControllerTest {
     @Test
     public void shouldFetchTask() throws Exception {
         //Given
-        TaskDto taskDto = new TaskDto(1L, "test title", "test task");
-        Task task = new Task(1L, "test title", "test task");
+        taskDto = new TaskDto(1L, "test title", "test task");
+        task = new Task(1L, "test title", "test task");
         when(taskMapper.mapToTaskDto(ArgumentMatchers.any(Task.class))).thenReturn(taskDto);
         when(dbService.getTaskById(1L)).thenReturn(java.util.Optional.of(task));
         //When & Then
@@ -85,11 +90,11 @@ public class TaskControllerTest {
     @Test
     public void shouldCreateTask() throws Exception {
         //Given
-        TaskDto taskDto = new TaskDto(1L, "test title", "test task");
-        Task task = new Task(1L, "test title", "test task");
+        taskDto = new TaskDto(1L, "test title", "test task");
+        task = new Task(1L, "test title", "test task");
         when(taskMapper.mapToTask(ArgumentMatchers.any(TaskDto.class))).thenReturn(task);
 
-        Gson gson = new Gson();
+        gson = new Gson();
         String jsonContent = gson.toJson(taskDto);
         //When & Then
         mockMvc.perform(post("/v1/task/createTask").contentType(MediaType.APPLICATION_JSON)
@@ -102,13 +107,13 @@ public class TaskControllerTest {
     @Test
     public void shouldUpdateTask() throws Exception {
         //Given
-        TaskDto taskDto = new TaskDto(1L, "test title", "test task");
-        Task task = new Task(1L, "test title", "test task");
+        taskDto = new TaskDto(1L, "test title", "test task");
+        task = new Task(1L, "test title", "test task");
         when(taskMapper.mapToTaskDto(ArgumentMatchers.any(Task.class))).thenReturn(taskDto);
         when(dbService.saveTask(ArgumentMatchers.any(Task.class))).thenReturn(task);
         when(taskMapper.mapToTask(ArgumentMatchers.any(TaskDto.class))).thenReturn(task);
 
-        Gson gson = new Gson();
+        gson = new Gson();
         String jsonContent = gson.toJson(taskDto);
         //When & Then
         mockMvc.perform(put("/v1/task/updateTask").contentType(MediaType.APPLICATION_JSON)
@@ -123,7 +128,7 @@ public class TaskControllerTest {
     @Test
     public void shouldDeleteTask() throws Exception {
         //Given
-        Task task = new Task(1L, "test title", "test task");
+        task = new Task(1L, "test title", "test task");
         when(dbService.getTaskById(1L)).thenReturn(Optional.of(task));
 
         //When & Then
